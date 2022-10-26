@@ -1,0 +1,22 @@
+# checkpoints
+.ipynb_checkpoints
+
+inline
+
+# ignore folder
+/ignore
+
+# ignore .idea directory
+/.idea
+
+# ignore all .csv files
+*.csv
+
+# ignore merge files
+.merge*
+
+# ignore all .pdf files
+*.pdf
+
+# ignore all .xlsx files
+*.xlsx
