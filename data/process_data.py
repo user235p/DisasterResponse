@@ -1,16 +1,52 @@
 import sys
-
+import pandas as pd
+from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
-    pass
+    '''
+    Function: Load data from csv files, and merge them generating one column for each category.
+    Input: names of both messages and categories files.
+    Output: dataframe without merged data
+    '''
+    messages = pd.read_csv(messages_filepath) # Load messages table
+    categories = pd.read_csv(categories_filepath) # Load categories table
+    df = pd.merge(messages, categories, on='id') # Merge both tables based on id
+    categories_separated = df['categories'].str.split(';', expand=True) # New dataframe extrated from the column categories
 
+    # based on the first row, generate the names of the columns for dataframe categories_separated
+    row = df.categories[0]
+    category_colnames = [colname[:-2] for colname in row.split(';')]
+    categories_separated.columns = category_colnames
+    for column in categories_separated:
+        # set each value to be the last character of the string
+        categories_separated[column].astype(str)
+        categories_separated[column] = categories_separated[column].str[-1].astype(int) # take the last character as information and ignore the rest.
+
+    # Integrate categories_separated in dataframe df
+    df.drop(columns='categories', inplace=True) # Eliminate original column categories
+    df = pd.concat([df, categories_separated], axis=1) # Add the new separated columns with the data
+    return df
 
 def clean_data(df):
-    pass
+    '''
+    Function: remove duplicates on the dataframe
+    Input: dataframe
+    Output: dataframe without duplicates
+    '''
+    df.drop_duplicates(inplace=True)
+    return df
 
 
 def save_data(df, database_filename):
-    pass  
+    '''
+    Function: save dataframe into a sql database
+    Input: dataframe and filename of the database
+    Output: none.
+    '''
+    engine = create_engine('sqlite:///'+database_filename)
+    df.to_sql(database_filename, engine, index=False) # save dataframe into sql database file
+    return
+
 
 
 def main():
