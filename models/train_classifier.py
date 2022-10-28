@@ -4,6 +4,9 @@ import numpy as np
 import re
 import joblib
 
+import os
+import sqlite3 as db
+
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -28,7 +31,24 @@ def load_data(database_filepath):
     Input: filepath of sql database
     Output: messages list, category list and category names list
     '''
-    df = pd.read_sql_table('messages', 'sqlite:///'+database_filepath)
+    
+    # Windows use, see https://docs.sqlalchemy.org/en/13/core/engines.html#database-urls
+    # engine = create_engine('sqlite:///C:\\path\\to\\foo.db')
+    
+    path = os.path.dirname(os.path.realpath(__file__)) # directory path of the app
+    con = db.connect(os.path.join(path, database_filepath))
+    df = pd.read_sql_query("SELECT * from messages", con)
+    
+    con.close()
+    
+    #df = pd.read_sql_table('messages', engine)
+    
+    #engine = create_engine('sqlite:///..\\Data\\'+database_filename)
+    
+    
+    #df = pd.read_sql_table('messages', 'sqlite:///'+database_filepath)
+
+    
     X = df['message'].values
     category_names = ['related', 'request', 'offer',
            'aid_related', 'medical_help', 'medical_products', 'search_and_rescue',

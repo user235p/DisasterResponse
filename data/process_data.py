@@ -1,6 +1,6 @@
 import sys
 import pandas as pd
-from sqlalchemy import create_engine
+import sqlite3 as db
 
 def load_data(messages_filepath, categories_filepath):
     '''
@@ -43,8 +43,10 @@ def save_data(df, database_filename):
     Input: dataframe and filename of the database
     Output: none.
     '''
-    engine = create_engine('sqlite:///'+database_filename)
-    df.to_sql(database_filename, engine, index=False) # save dataframe into sql database file
+    database = database_filename
+    conn = db.connect(database)
+    df.to_sql(name='messages', con=conn)
+    conn.close()
     return
 
 
