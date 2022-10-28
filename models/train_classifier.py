@@ -31,23 +31,10 @@ def load_data(database_filepath):
     Input: filepath of sql database
     Output: messages list, category list and category names list
     '''
-    
-    # Windows use, see https://docs.sqlalchemy.org/en/13/core/engines.html#database-urls
-    # engine = create_engine('sqlite:///C:\\path\\to\\foo.db')
-    
     path = os.path.dirname(os.path.realpath(__file__)) # directory path of the app
     con = db.connect(os.path.join(path, database_filepath))
     df = pd.read_sql_query("SELECT * from messages", con)
-    
     con.close()
-    
-    #df = pd.read_sql_table('messages', engine)
-    
-    #engine = create_engine('sqlite:///..\\Data\\'+database_filename)
-    
-    
-    #df = pd.read_sql_table('messages', 'sqlite:///'+database_filepath)
-
     
     X = df['message'].values
     category_names = ['related', 'request', 'offer',
@@ -70,7 +57,7 @@ def tokenize(text):
     text = text.lower() # Convert all leters to low case.
     text = re.sub(r"[^a-z0-9]", " ", text) # Anything that isn't a through z or 0 through 9 will be replaced by a space
     tokens = word_tokenize(text) # tokenize text
-    tokens = [lemmatizer.lemmatize(w) for w in tokens if w not in stopwords.words('english')] # lemmatize and remove stop words
+    tokens = [WordNetLemmatizer().lemmatize(w) for w in tokens if w not in stopwords.words('english')] # lemmatize and remove stop words
     return tokens
 
 
