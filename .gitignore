@@ -23,3 +23,6 @@ inline
 
 # ignore all database files
 *.db
+
+# ignore all model files
+*.pkl
