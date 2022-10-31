@@ -31,11 +31,11 @@ def tokenize(text):
 #path = os.path.dirname(os.path.realpath(__file__)) # directory path of the app
 con = db.connect('../data/DisasterResponse2.db') #../data/
 df = pd.read_sql_query("SELECT * from messages", con)
+#print (df.head(5))
 con.close()
 
 # load model
 model = joblib.load("../models/model.pkl")
-
 
 # index webpage displays cool visuals and receives user input text for model
 @app.route('/')
@@ -46,6 +46,11 @@ def index():
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+        
+    data = {'water': df.groupby('water').count().iloc[1].id, 'food': df.groupby('food').count().iloc[1].id, 'clothing': df.groupby('clothing').count().iloc[1].id, 'medical_products': df.groupby('medical_products').count().iloc[1].id}
+    issues_names = ['water', 'food', 'clothing', 'medical_products']
+    issues_counts = pd.Series(data=data, index=issues_names)
+    
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -68,7 +73,28 @@ def index():
                 }
             }
         }
+        ,
+        {
+            'data': [
+                Bar(
+                    x=issues_names,
+                    y=issues_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of 2XXXXXXX',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "XXXX"
+                }
+            }
+        }
     ]
+    
+    
     
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
