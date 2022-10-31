@@ -43,18 +43,59 @@ model = joblib.load("../models/model.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
-    genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
-        
+
     data = {'water': df.groupby('water').count().iloc[1].id, 'food': df.groupby('food').count().iloc[1].id, 'clothing': df.groupby('clothing').count().iloc[1].id, 'medical_products': df.groupby('medical_products').count().iloc[1].id}
     issues_names = ['water', 'food', 'clothing', 'medical_products']
     issues_counts = pd.Series(data=data, index=issues_names)
     
+    data = {'transport': df.groupby('transport').count().iloc[1].id, 'buildings': df.groupby('buildings').count().iloc[1].id, 'electricity': df.groupby('electricity').count().iloc[1].id, 'hospitals': df.groupby('hospitals').count().iloc[1].id, 'aid_centers': df.groupby('aid_centers').count().iloc[1].id}
+    infraestructure_names = ['transport', 'buildings', 'electricity', 'hospitals', 'aid_centers']
+    infraestructure_counts = pd.Series(data=data, index=infraestructure_names)
     
-    # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+    genre_counts = df.groupby('genre').count()['message']
+    genre_names = list(genre_counts.index)
+    
+    # visuals
+
     graphs = [
+        {
+            'data': [
+                Bar(
+                    x=infraestructure_names,
+                    y=infraestructure_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of infraestructure related messages',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Infraestructure messages"
+                }
+            }
+        }
+        ,
+        {
+            'data': [
+                Bar(
+                    x=issues_names,
+                    y=issues_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of basic needs related messages',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Basic needs"
+                }
+            }
+        }
+        ,
         {
             'data': [
                 Bar(
@@ -70,25 +111,6 @@ def index():
                 },
                 'xaxis': {
                     'title': "Genre"
-                }
-            }
-        }
-        ,
-        {
-            'data': [
-                Bar(
-                    x=issues_names,
-                    y=issues_counts
-                )
-            ],
-
-            'layout': {
-                'title': 'Distribution of 2XXXXXXX',
-                'yaxis': {
-                    'title': "Count"
-                },
-                'xaxis': {
-                    'title': "XXXX"
                 }
             }
         }
